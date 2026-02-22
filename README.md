@@ -23,7 +23,8 @@ The application performs the following core HMM calculations as defined in the c
 
 
 ### Installation & Execution
-**Prerequisites**
+
+#### Prerequisites
 
 Ensure you have Python installed. You will need the following libraries:
 * streamlit
@@ -53,4 +54,29 @@ Follow these steps to set up and run the application on your local machine:
   ```
   * The application will automatically open in your default web browser. If it does not, copy the "Local URL" provided in the terminal and paste it into your browser's address bar.
 
+### User Instructions
+
+1. **Configuration:** Use the **Sidebar** to enter your hidden states (e.g., `Sunny Rainy Cloudy`), observation symbols (e.g., `Walk Shop Stay`), and the sequence you wish to train on.
+2. **Iterations:** Adjust the slider to set the number of training iterations.
+3. **Training:** Click the "Train Model" button.
+4. **Analysis:**
+    * Expand the **Iteration Tables** to see the $\alpha$, $\beta$, and $\gamma$ values at each step.
+    * Review the **Final Parameters** ($A, B, \pi$) in the tables provided.
+    * Observe the **Learning Curves** to see the Likelihood $P(O|\lambda)$ increasing and the Uncertainty $1 - P(O|\lambda)$ decreasing.
     
+### Visualizations Included
+* **$P(O|\lambda)$ Graph:** Shows how the model learns to better explain the data over time.
+* **$1 - P(O|\lambda)$ Graph:** Displays the reduction in model uncertainty per iteration.
+* **Soft Credit Tables:** Detailed breakdown of state responsibilities per time step.
+
+### Application Preview
+
+#### Parameter Optimization
+<img width="1919" height="707" alt="image3" src="https://github.com/user-attachments/assets/37a0f257-a6b6-4f7e-b8ad-1c5fb8a20eae" />
+
+<img width="1919" height="704" alt="image4" src="https://github.com/user-attachments/assets/b0f3f3d1-fb11-4a37-86a8-ff8750d83373" />
+
+#### Learning Curves
+<img width="1917" height="713" alt="image5" src="https://github.com/user-attachments/assets/029d2d77-153e-4a53-84c3-3ecaf9c453c9" />
+
+
