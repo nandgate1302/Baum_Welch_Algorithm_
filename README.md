@@ -21,8 +21,10 @@ The application performs the following core HMM calculations as defined in the c
 * **Soft Credit Assignment ($\gamma$):** Calculates state responsibility at each time step.
 * **Parameter Updates:** Iteratively updates the initial probabilities ($\pi$), transition matrix ($A$), and emission matrix ($B$).
 
+You can access the fully functional web application directly here:  **[Baum_Welch_Algorithm_Visualizer](https://baum-welch-algo-visualizer.streamlit.app/)**
 
-### Installation & Execution
+### Local Installation & Execution [Optional]
+If you prefer to run the application on your local machine, follow these steps:
 
 #### Prerequisites
 
