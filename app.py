@@ -17,32 +17,29 @@ class HMM_Streamlit:
 
     def run_iteration(self, obs_seq):
         T = len(obs_seq)
-        # Forward Pass: P(O1...Ot, qt=i | lambda)
+        # Forward Pass
         alpha = np.zeros((T, self.N))
         alpha[0] = self.pi * self.B[:, obs_seq[0]]
         for t in range(1, T):
             for j in range(self.N):
                 alpha[t, j] = np.dot(alpha[t-1], self.A[:, j]) * self.B[j, obs_seq[t]]
         
-        # [cite_start]Backward Pass: P(Ot+1...OT | qt=i, lambda) 
+        # Backward Pass
         beta = np.zeros((T, self.N))
         beta[T-1] = np.ones(self.N)
         for t in range(T-2, -1, -1):
             for i in range(self.N):
                 beta[t, i] = np.sum(self.A[i, :] * self.B[:, obs_seq[t+1]] * beta[t+1, :])
         
-        prob_O = np.sum(alpha[-1]) # Total Likelihood P(O|lambda) 
-        
-        # [cite_start]State Responsibility (Gamma) 
+        prob_O = np.sum(alpha[-1]) 
         gamma = (alpha * beta) / prob_O
         
-        # [cite_start]Transition Responsibility (Xi) 
         xi = np.zeros((T-1, self.N, self.N))
         for t in range(T-1):
             for i in range(self.N):
                 xi[t, i, :] = (alpha[t, i] * self.A[i, :] * self.B[:, obs_seq[t+1]] * beta[t+1, :]) / prob_O
 
-        # [cite_start]Parameter Updates (M-Step) 
+        # Parameter Updates
         self.pi = gamma[0] 
         self.A = np.sum(xi, axis=0) / np.sum(gamma[:-1], axis=0).reshape(-1, 1) 
         for l in range(self.M):
@@ -52,6 +49,17 @@ class HMM_Streamlit:
 
 # Streamlit UI Setup
 st.set_page_config(page_title="HMM Baum-Welch", layout="wide", initial_sidebar_state="expanded")
+
+# --- GLOBAL CSS INJECTION (This forces center alignment everywhere) ---
+st.markdown("""
+    <style>
+    .stTable td, .stTable th {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("Baum-Welch Algorithm Visualizer")
 
 with st.sidebar:
@@ -64,7 +72,7 @@ with st.sidebar:
 if st.button("Train Model"):
     hmm = HMM_Streamlit(states_in, symbols_in)
     sym_map = {s: i for i, s in enumerate(symbols_in)}
-    obs_seq = np.array([sym_map[o] for o in obs_in])
+    obs_seq = np.array([sym_map[o] for i, o in enumerate(obs_in)])
     
     history_p = []
     
@@ -74,9 +82,14 @@ if st.button("Train Model"):
         history_p.append(p_o)
         
         with st.expander(f"Iteration {i+1} Tables (Alpha, Beta, Gamma)"):
-            st.write("**Forward Variable (α) - Prefix Evidence**", pd.DataFrame(alpha, columns=states_in))
-            st.write("**Backward Variable (β) - Suffix Evidence**", pd.DataFrame(beta, columns=states_in))
-            st.write("**State Responsibility (γ)**", pd.DataFrame(gamma, columns=states_in))
+            st.write("**Forward Variable (α) - Prefix Evidence**")
+            st.table(pd.DataFrame(alpha, columns=states_in))
+            
+            st.write("**Backward Variable (β) - Suffix Evidence**")
+            st.table(pd.DataFrame(beta, columns=states_in))
+            
+            st.write("**State Responsibility (γ)**")
+            st.table(pd.DataFrame(gamma, columns=states_in))
 
     # 1. Final Parameter Display
     st.header("Final Parameters (λ)")
